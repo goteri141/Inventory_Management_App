@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final CollectionReference _products =
+  final CollectionReference _items =
       FirebaseFirestore.instance.collection('items');
 
   Future<void> _createOrUpdate([DocumentSnapshot? documentSnapshot]) async {
@@ -80,10 +80,10 @@ class _HomePageState extends State<HomePage> {
                   double price = double.parse(_priceController.text);
                   if (name.isNotEmpty) {
                     if (action == 'create') {
-                      await _products.add({"name": name, "price": price});
+                      await _items.add({"name": name, "price": price});
                     }
                     if (action == 'update') {
-                      await _products.doc(documentSnapshot!.id).update({
+                      await _items.doc(documentSnapshot!.id).update({
                         "name": name, "price": price,
                       });
                     }
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                   double price = double.parse(_priceController.text);
                   if (name.isNotEmpty) {
                     if (action == 'delete') {
-                      await _products.doc(itemId).delete();
+                      await _items.doc(itemId).delete();
                     }
                     _nameController.text = '';
                     _priceController.text = '';
@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: const Text('CRUD Operations')),
       body: StreamBuilder(
-        stream: _products.snapshots(),
+        stream: _items.snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasData) {
             return ListView.builder(
